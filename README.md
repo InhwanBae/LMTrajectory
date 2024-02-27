@@ -34,8 +34,8 @@ Coming Soon! [will be released after ECCV2024 submission :)]
 ## 📖 Citation
 If you find this code useful for your research, please cite our trajectory prediction papers :)
 
-[**`💬 LMTrajectory (ICCV'23) 🗨️`**](https://github.com/InhwanBae/LMTrajectory) **|**
-[**`1️⃣ SingularTrajectory (ICCV'23) 1️⃣`**](https://github.com/InhwanBae/SingularTrajectory) **|**
+[**`💬 LMTrajectory (CVPR'24) 🗨️`**](https://github.com/InhwanBae/LMTrajectory) **|**
+[**`1️⃣ SingularTrajectory (CVPR'24) 1️⃣`**](https://github.com/InhwanBae/SingularTrajectory) **|**
 [**`🌌 EigenTrajectory (ICCV'23) 🌌`**](https://github.com/InhwanBae/EigenTrajectory) **|** 
 [**`🚩 Graph‑TERN (AAAI'23) 🚩`**](https://github.com/InhwanBae/GraphTERN) **|**
 [**`🧑‍🤝‍🧑 GP‑Graph (ECCV'22) 🧑‍🤝‍🧑`**](https://github.com/InhwanBae/GPGraph) **|**
