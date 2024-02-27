@@ -50,7 +50,7 @@ If you find this code useful for your research, please cite our trajectory predi
   year={2024}
 }
 ```
-<details>
+<details open>
   <summary>More Information (Click to expand)</summary>
 
 ```bibtex
