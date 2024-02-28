@@ -28,7 +28,7 @@
 
 ## 💬 LMTrajectory Pipeline 🗨️
 
-Coming Soon! [will be released after ECCV2024 submission :)]
+Coming Soon! (Please check our [project page](https://inhwanbae.github.io/publication/lmtrajectory/) :)
 
 
 ## 📖 Citation
