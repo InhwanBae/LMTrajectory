@@ -2,7 +2,7 @@
 <p align="center">
   <a href="https://InhwanBae.github.io/"><strong>Inhwan Bae</strong></a>
   ·  
-  <a href="https://openreview.net/profile?id=~Junoh_Lee1"><strong>Junoh Lee</strong></a>
+  <a href="https://scholar.google.com/citations?user=OZcCxNQAAAAJ"><strong>Junoh Lee</strong></a>
   ·
   <a href="https://scholar.google.com/citations?user=Ei00xroAAAAJ"><strong>Hae-Gon Jeon</strong></a>
   <br>
@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://inhwanbae.github.io/publication/lmtrajectory/"><strong><code>Project Page</code></strong></a>
-  <a href="https://arxiv.org/abs/0000.00000"><strong><code>CVPR Paper [Coming Soon]</code></strong></a>
+  <a href="https://arxiv.org/abs/2403.18447"><strong><code>CVPR Paper</code></strong></a>
   <a href="https://github.com/InhwanBae/LMTrajectory"><strong><code>Source Code</code></strong></a>
   <a href="#-citation"><strong><code>Related Works</code></strong></a>
 </p>
@@ -28,7 +28,8 @@
 
 ## 💬 LMTrajectory Pipeline 🗨️
 
-Coming Soon! (Please check our [project page](https://inhwanbae.github.io/publication/lmtrajectory/) :)
+- [x] 3/27 Paper [released](https://arxiv.org/abs/2403.18447)!
+- [ ] Source code will be released shortly. (Please check our [project page](https://inhwanbae.github.io/publication/lmtrajectory/) :)
 
 
 ## 📖 Citation
