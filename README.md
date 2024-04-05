@@ -17,7 +17,7 @@
 </p>
 
 <div align='center'>
-  <br><img src="img/lmtraj-model.png" width=70%>
+  <br><img src="img/lmtraj-model.gif" width=70%>
   <br>Traditional vs. Our language-based trajectory prediction, LMTraj.
 </div>
 
