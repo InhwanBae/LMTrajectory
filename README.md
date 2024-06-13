@@ -1,4 +1,5 @@
-<h2 align="center">Can Language Beat Numerical Regression?<br>Language-Based Multimodal Trajectory Prediction</h2>
+<!--<h1 align="center">Can Language Beat Numerical Regression?<br>Language-Based Multimodal Trajectory Prediction</h1>-->
+<h1 align="center">Can $\large{\color{Orange}{\textbf{\textsf{Language}}}}$ Beat $\large{\color{MidnightBlue}{\textbf{\textsf{Numerical Regression}}}}$?<br>Language-Based Multimodal Trajectory Prediction </h1>
 <p align="center">
   <a href="https://InhwanBae.github.io/"><strong>Inhwan Bae</strong></a>
   ·  
