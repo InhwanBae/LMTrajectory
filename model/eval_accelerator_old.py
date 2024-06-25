@@ -26,7 +26,7 @@ from accelerate import Accelerator
 def test(cfg):
     # Initialize the Natural language toolkit
     init_nltk()
-    
+
     # Initialize the accelerator.
     checkpoint_path = os.path.join(cfg.checkpoint_path, cfg.checkpoint_name)
     accelerator_log_kwargs = {}
@@ -66,10 +66,10 @@ def test(cfg):
 
     data_files = {}
     data_files["test"] = os.path.join(preprocessed_dataset_path, preprocessed_test_dataset_name)
-    
+
     if not os.path.exists(data_files["test"]):
         raise ValueError(f"Preprocessed dataset files not found: {data_files['train']} or {data_files['validation']}. Please run `./script/preprocessor.sh` first.")
-    
+
     extension = data_files["test"].split(".")[-1]
     raw_datasets = load_dataset(extension, data_files=data_files, cache_dir=cfg.cache_dir)
 
@@ -80,7 +80,7 @@ def test(cfg):
     model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint_path, config=config, trust_remote_code=False, cache_dir=cfg.cache_dir)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
-    
+
     if accelerator.is_local_main_process:
         def count_parameters(model):
             return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -123,67 +123,69 @@ def test(cfg):
 
     model, eval_dataloader = accelerator.prepare(model, eval_dataloader)
 
-    progress_bar = tqdm(range(len(obs_traj)), desc="Generating", disable=not accelerator.is_local_main_process)
-    progress_step = cfg.per_device_inference_batch_size * accelerator.state.num_processes
+    total_progress_steps = len(obs_traj) // (cfg.per_device_inference_batch_size * accelerator.state.num_processes) + 1
+    total_generation_steps = total_progress_steps * (1 if cfg.deterministic else cfg.num_samples)
+    progress_bar = tqdm(range(total_generation_steps), desc="Generating", disable=not accelerator.is_local_main_process)
 
     all_obs = np.array(raw_datasets['test']['obs_traj']).astype(np.float32)
     all_gts = np.array(raw_datasets['test']['pred_traj']).astype(np.float32)
     all_preds = []
     error_ids = []
-    
+
     for step, batch in enumerate(eval_dataloader):
-        if cfg.deterministic:
-            # Most-likely prediction
-            generated_tokens = accelerator.unwrap_model(model).generate(batch["input_ids"].to(device),
-                                                                        attention_mask=batch["attention_mask"].to(device),
-                                                                        max_length=cfg.max_target_length,
-                                                                        num_beams=cfg.num_beams)
-        else:
-            # Probabilistic sampling
-            generated_tokens = accelerator.unwrap_model(model).generate(batch["input_ids"].to(device),
-                                                                        attention_mask=batch["attention_mask"].to(device),
-                                                                        max_length=cfg.max_target_length,
-                                                                        do_sample=True,
-                                                                        num_return_sequences=cfg.num_samples,
-                                                                        temperature=cfg.temperature,
-                                                                        top_k=cfg.top_k)
-            
-        generated_tokens = accelerator.pad_across_processes(generated_tokens, dim=1, pad_index=tokenizer.pad_token_id)
-        generated_tokens = accelerator.gather_for_metrics((generated_tokens.view(-1, cfg.num_samples, generated_tokens.size(-1))))
-        generated_tokens = generated_tokens.view(-1, generated_tokens.size(-1)).cpu().numpy()
-        generated_tokens = generated_tokens[0] if isinstance(generated_tokens, tuple) else generated_tokens
+        generated_preds_trial = []
+        for _ in range(1 if cfg.deterministic else cfg.num_samples):
+            if cfg.deterministic:
+                # Detsrministic prediction
+                generated_tokens = accelerator.unwrap_model(model).generate(batch["input_ids"].to(device),
+                                                                            attention_mask=batch["attention_mask"].to(device),
+                                                                            max_length=cfg.max_target_length,
+                                                                            num_beams=cfg.num_beams)
+            else:
+                # Stochastic prediction
+                generated_tokens = accelerator.unwrap_model(model).generate(batch["input_ids"].to(device),
+                                                                            attention_mask=batch["attention_mask"].to(device),
+                                                                            max_length=cfg.max_target_length,
+                                                                            do_sample=True,
+                                                                            top_k=cfg.top_k,
+                                                                            temperature=cfg.temperature)
 
-        if not cfg.use_slow_tokenizer:
-            decoded_preds = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-        else:
-            # make sure that special tokens are not decoded using sentencepiece model
-            filtered_tokens = np.where(generated_tokens >= tokenizer.sp_model.get_piece_size(), 0, generated_tokens)
-            decoded_preds = tokenizer.sp_model.decode(filtered_tokens.tolist())
-        decoded_preds = [pred.strip() for pred in decoded_preds]
-        traj_data = batch_text2traj(decoded_preds, frame=cfg.pred_len, dim=2)
+            generated_tokens = accelerator.pad_across_processes(generated_tokens, dim=1, pad_index=tokenizer.pad_token_id)
+            generated_tokens = accelerator.gather_for_metrics((generated_tokens))
+            generated_tokens = generated_tokens.cpu().numpy()
+            generated_tokens = generated_tokens[0] if isinstance(generated_tokens, tuple) else generated_tokens
 
-        for pid in range(len(traj_data)):
-            if traj_data[pid] is None:
-                ped_id = cfg.per_device_inference_batch_size * accelerator.state.num_processes * step + pid // cfg.num_samples
-                error_ids.append(ped_id)
-                # Assume the pedestrian is not moving
-                traj_data[pid] = np.tile(all_obs[ped_id, -1], (cfg.pred_len, 1))
+            if not cfg.use_slow_tokenizer:
+                decoded_preds = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+            else:
+                filtered_tokens = np.where(generated_tokens >= tokenizer.sp_model.get_piece_size(), 0, generated_tokens)
+                decoded_preds = tokenizer.sp_model.decode(filtered_tokens.tolist())
+            decoded_preds = [pred.strip() for pred in decoded_preds]
+            traj_data = batch_text2traj(decoded_preds, frame=cfg.pred_len, dim=2)
 
-        traj_data = np.stack(traj_data, axis=0).reshape(-1, cfg.num_samples, cfg.pred_len, 2)
-        all_preds.append(traj_data)
-        progress_bar.update(progress_step)
+            for pid in range(len(traj_data)):
+                if traj_data[pid] is None:
+                    ped_id = cfg.per_device_inference_batch_size * accelerator.state.num_processes * step + pid
+                    error_ids.append(ped_id)
+                    # Assume the pedestrian is not moving
+                    traj_data[pid] = np.tile(all_obs[ped_id, -1], (cfg.pred_len, 1))
+
+            generated_preds_trial.append(np.array(traj_data))
+            progress_bar.update(1)
+
+        generated_preds_trial = np.stack(generated_preds_trial, axis=1)
+        all_preds.append(generated_preds_trial)
 
     all_preds = np.concatenate(all_preds, axis=0).astype(np.float32)
-    progress_bar.n = len(obs_traj)
     progress_bar.close()
-    
+
     # Evaluate the prediction
     if accelerator.is_local_main_process:
         all_preds = postprocess_trajectory(all_preds, obs_traj, seq_start_end, scene_id, homography, scene_map, cfg)
         ADE = []
         FDE = []
         for ped_id in range(all_preds.shape[0]):
-            
+
             # Homography warping
             if cfg.metric == "pixel":
                 H = homography[scene_id[ped_id]]
@@ -198,8 +200,8 @@ def test(cfg):
         print(f"Total pedestrian number: {all_preds.shape[0]}")
         print(f"ADE: {np.mean(ADE)}")
         print(f"FDE: {np.mean(FDE)}")
-        
-        
+
+
 if __name__ == "__main__":
     from utils.config import get_exp_config, DotDict
     args = get_exp_config()

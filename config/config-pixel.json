@@ -22,7 +22,7 @@
     "max_target_length": 128,
     "per_device_train_batch_size": 64,
     "per_device_eval_batch_size": 64,
-    "per_device_inference_batch_size": 1024,
+    "per_device_inference_batch_size": 1,
     "num_train_epochs": 8,
     "max_train_steps": null,
     "gradient_accumulation_steps": 1,
