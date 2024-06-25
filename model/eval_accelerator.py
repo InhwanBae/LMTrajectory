@@ -26,7 +26,7 @@ from accelerate import Accelerator
 def test(cfg):
     # Initialize the Natural language toolkit
     init_nltk()
-    
+
     # Initialize the accelerator.
     checkpoint_path = os.path.join(cfg.checkpoint_path, cfg.checkpoint_name)
     accelerator_log_kwargs = {}
@@ -47,6 +47,8 @@ def test(cfg):
     non_linear_ped = dataloader.dataset.non_linear_ped.numpy()
     homography = dataloader.dataset.homography
     scene_id = dataloader.dataset.scene_id
+    scene_img = dataloader.dataset.scene_img
+    scene_map = dataloader.dataset.scene_map
     seq_start_end = dataloader.dataset.seq_start_end
 
     batch_size_per_gpu = obs_traj.shape[0] // accelerator.state.num_processes + 1
@@ -56,18 +58,18 @@ def test(cfg):
 
     # Scale down the scene
     for k, v in homography.items():
-        IMAGE_SCALE_DOWN = 0.25
-        homography[k] = v.copy() @ generate_homography(scale=IMAGE_SCALE_DOWN)
+        cfg.image_scale_down = 0.25
+        homography[k] = v.copy() @ generate_homography(scale=cfg.image_scale_down)
 
     preprocessed_test_dataset_name = f"{cfg.dataset_name}-test-{cfg.obs_len}-{cfg.pred_len}-{cfg.metric}.json"
     preprocessed_dataset_path = os.path.join(cfg.dataset_path, "preprocessed")
 
     data_files = {}
     data_files["test"] = os.path.join(preprocessed_dataset_path, preprocessed_test_dataset_name)
-    
+
     if not os.path.exists(data_files["test"]):
         raise ValueError(f"Preprocessed dataset files not found: {data_files['train']} or {data_files['validation']}. Please run `./script/preprocessor.sh` first.")
-    
+
     extension = data_files["test"].split(".")[-1]
     raw_datasets = load_dataset(extension, data_files=data_files, cache_dir=cfg.cache_dir)
 
@@ -78,7 +80,7 @@ def test(cfg):
     model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint_path, config=config, trust_remote_code=False, cache_dir=cfg.cache_dir)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
-    
+
     if accelerator.is_local_main_process:
         def count_parameters(model):
             return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -129,7 +131,7 @@ def test(cfg):
     all_gts = np.array(raw_datasets['test']['pred_traj']).astype(np.float32)
     all_preds = []
     error_ids = []
-    
+
     for step, batch in enumerate(eval_dataloader):
         generated_preds_trial = []
         for _ in range(1 if cfg.deterministic else cfg.num_samples):
@@ -147,7 +149,7 @@ def test(cfg):
                                                                             do_sample=True,
                                                                             top_k=cfg.top_k,
                                                                             temperature=cfg.temperature)
-                
+
             generated_tokens = accelerator.pad_across_processes(generated_tokens, dim=1, pad_index=tokenizer.pad_token_id)
             generated_tokens = accelerator.gather_for_metrics((generated_tokens))
             generated_tokens = generated_tokens.cpu().numpy()
@@ -176,14 +178,14 @@ def test(cfg):
 
     all_preds = np.concatenate(all_preds, axis=0).astype(np.float32)
     progress_bar.close()
-    
+
     # Evaluate the prediction
     if accelerator.is_local_main_process:
-        all_preds = postprocess_trajectory(all_preds, obs_traj, seq_start_end, scene_id, homography, cfg)
+        all_preds = postprocess_trajectory(all_preds, obs_traj, seq_start_end, scene_id, homography, scene_map, cfg)
         ADE = []
         FDE = []
         for ped_id in range(all_preds.shape[0]):
-            
+
             # Homography warping
             if cfg.metric == "pixel":
                 H = homography[scene_id[ped_id]]
@@ -198,8 +200,8 @@ def test(cfg):
         print(f"Total pedestrian number: {all_preds.shape[0]}")
         print(f"ADE: {np.mean(ADE)}")
         print(f"FDE: {np.mean(FDE)}")
-        
-        
+
+
 if __name__ == "__main__":
     from utils.config import get_exp_config, DotDict
     args = get_exp_config()

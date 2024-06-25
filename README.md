@@ -62,13 +62,13 @@ Two scripts are provided in `./zero-shot/chatgpt_sequential_v3.sh` and `./zero-s
 ./chatgpt_sequential_v3.sh -d <DATASET_ID> -m <LLM_MODEL_ID>
 ./chatgpt_multi_v3.sh -d <DATASET_ID> -m <LLM_MODEL_ID>
 
-# Supported dataset id: 1 (ETH), 2 (HOTEL), 3 (UNIV), 4 (ZARA1), 5 (ZARA2)
-# Supported llm model id: 1 (gpt-3.5-turbo-0301), 2 (gpt-4-0314), 3 (gpt-3.5-turbo-1106), 4 (gpt-4-1106-preview)
+# Supported dataset id: 0 (ETH), 1 (HOTEL), 2 (UNIV), 3 (ZARA1), 4 (ZARA2)
+# Supported llm model id: 0 (gpt-3.5-turbo-0301), 1 (gpt-4-0314), 2 (gpt-3.5-turbo-1106), 3 (gpt-4-1106-preview)
 
 # Examples
 cd zero-shot
-./chatgpt_multi_v3.sh -d 1 -m 4
-./chatgpt_multi_v3.sh -d 2 -m 4
+./chatgpt_multi_v3.sh -d 0 -m 3
+./chatgpt_multi_v3.sh -d 1 -m 3
 ```
 If an error is encountered, your progress will be saved. When you rerun the same script, it will skip the parts that were successfully executed and only regenerate the paths where issues occurred.
 
@@ -80,24 +80,24 @@ If you want to run the model with custom hyperparameters or other models availab
 ```bash
 python ./zero-shot/chatgpt-fragmented_dump_combiner.py --dataset <DATASET_ID> --model <LLM_MODEL_ID>
 
-# Supported dataset id: 1 (ETH), 2 (HOTEL), 3 (UNIV), 4 (ZARA1), 5 (ZARA2)
-# Supported llm model id: 1 (gpt-3.5-turbo-0301), 2 (gpt-4-0314), 3 (gpt-3.5-turbo-1106), 4 (gpt-4-1106-preview)
+# Supported dataset id: 0 (ETH), 1 (HOTEL), 2 (UNIV), 3 (ZARA1), 4 (ZARA2)
+# Supported llm model id: 0 (gpt-3.5-turbo-0301), 1 (gpt-4-0314), 2 (gpt-3.5-turbo-1106), 3 (gpt-4-1106-preview)
 
 # Examples
-python ./zero-shot/chatgpt-fragmented_dump_combiner.py --dataset 1 --model 4
-python ./zero-shot/chatgpt-fragmented_dump_combiner.py --dataset 2 --model 4
+python ./zero-shot/chatgpt-fragmented_dump_combiner.py --dataset 0 --model 3
+python ./zero-shot/chatgpt-fragmented_dump_combiner.py --dataset 1 --model 3
 ```
 
 Next, evaluate the combined trajectories using ADE and FDE metrics.
 ```bash
-python ./zero-shot/compute_ade_fde_from_dump.py
+python ./zero-shot/compute_ade_fde_from_dump.py --dataset <DATASET_ID> --model <LLM_MODEL_ID>
 
-# Supported dataset id: 1 (ETH), 2 (HOTEL), 3 (UNIV), 4 (ZARA1), 5 (ZARA2)
-# Supported llm model id: 1 (gpt-3.5-turbo-0301), 2 (gpt-4-0314), 3 (gpt-3.5-turbo-1106), 4 (gpt-4-1106-preview)
+# Supported dataset id: 0 (ETH), 1 (HOTEL), 2 (UNIV), 3 (ZARA1), 4 (ZARA2)
+# Supported llm model id: 0 (gpt-3.5-turbo-0301), 1 (gpt-4-0314), 2 (gpt-3.5-turbo-1106), 3 (gpt-4-1106-preview)
 
 # Examples
-python ./zero-shot/compute_ade_fde_from_dump.py --dataset 1 --model 4
-python ./zero-shot/compute_ade_fde_from_dump.py --dataset 2 --model 4
+python ./zero-shot/compute_ade_fde_from_dump.py --dataset 0 --model 3
+python ./zero-shot/compute_ade_fde_from_dump.py --dataset 1 --model 3
 ```
 
 ### Evaluate Algorithmic Models
@@ -145,13 +145,13 @@ If you prefer to preprocess the datasets individually, use `./utils/preprocessor
 ```bash
 python ./utils/preprocessor.py --dataset <DATASET_NAME> --phase <TRAINING_PHASE>
 
-# Supported dataset name: ETH, HOTEL, UNIV, ZARA1, ZARA2
+# Supported dataset name: eth, hotel, univ, zara1, zara2
 # Supported training phase: train, val, test
 
 # Examples
-python ./utils/preprocessor.py --dataset eth --dataset train
-python ./utils/preprocessor.py --dataset hotel --dataset val
-python ./utils/preprocessor.py --dataset univ --dataset test
+python ./utils/preprocessor.py --dataset eth --phase train
+python ./utils/preprocessor.py --dataset hotel --phase val
+python ./utils/preprocessor.py --dataset univ --phase test
 ```
 
 **Tokenizer Training**
@@ -159,7 +159,7 @@ python ./utils/preprocessor.py --dataset univ --dataset test
 ```bash
 python ./utils/tokenizer.py --dataset <DATASET_NAME> --model <TOKENIZER_MODEL> --metric <PIXEL_OR_METER>
 
-# Supported dataset name: ETH, HOTEL, UNIV, ZARA1, ZARA2
+# Supported dataset name: eth, hotel, univ, zara1, zara2
 # Supported tokenizer model type: char, word, unigram, bpe
 # Supported metric type: pixel, meter
 

@@ -56,7 +56,7 @@ def traj_collate_fn(data):
     data_collated = {}
     for k in data[0].keys():
         data_collated[k] = [d[k] for d in data]
-    
+
     _len = [len(seq) for seq in data_collated["obs_traj"]]
     cum_start_idx = [0] + np.cumsum(_len).tolist()
     seq_start_end = [[start, end] for start, end in zip(cum_start_idx, cum_start_idx[1:])]
@@ -196,6 +196,7 @@ class TrajectoryDataset(Dataset):
         scene_id = []
         self.homography = {}
         self.scene_img = {}
+        self.scene_map = {}
         self.scene_desc = {}
         scene_img_map = {'biwi_eth': 'seq_eth', 'biwi_hotel': 'seq_hotel',
                          'students001': 'students003', 'students003': 'students003', 'uni_examples': 'students003',
@@ -211,7 +212,8 @@ class TrajectoryDataset(Dataset):
 
             try:
                 self.scene_img[scene_name] = Image.open(os.path.join(parent_dir, "image", scene_img_map[scene_name] + "_reference.png"))
-             
+                self.scene_map[scene_name] = np.array(Image.open(os.path.join(parent_dir, "image", scene_img_map[scene_name] + "_oracle.png")))
+
                 # check caption file exist
                 if os.path.exists(os.path.join(parent_dir, "image", scene_img_map[scene_name] + "_caption.txt")):
                     with open(os.path.join(parent_dir, "image", scene_img_map[scene_name] + "_caption.txt"), "r") as f:
@@ -220,8 +222,9 @@ class TrajectoryDataset(Dataset):
                     self.scene_desc[scene_name] = ""
             except:
                 self.scene_img[scene_name] = None
+                self.scene_map[scene_name] = None
                 self.scene_desc[scene_name] = ""
-            
+
             # Load homography matrix
             if dataset_name in ["eth", "hotel", "univ", "zara1", "zara2", "rawall"]:
                 homography_file = os.path.join(parent_dir, "homography", scene_name + "_H.txt")
