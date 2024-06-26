@@ -100,6 +100,14 @@ python ./zero-shot/compute_ade_fde_from_dump.py --dataset 0 --model 3
 python ./zero-shot/compute_ade_fde_from_dump.py --dataset 1 --model 3
 ```
 
+**Results**
+<table><thead><tr><th rowspan="2"><sub><b>LMTraj-ZERO</b></sub></th><th colspan="2"><sub><b>ETH</b></sub></th><th colspan="2"><sub><b>HOTEL</b></sub></th><th colspan="2"><sub><b>UNIV</b></sub></th><th colspan="2"><sub><b>ZARA1</b></sub></th><th colspan="2"><sub><b>ZARA2</b></sub></th><th colspan="2"><sub><b>AVG</b></sub></th></tr>
+<tr><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th></tr></thead><tbody>
+<tr><td><sub><b>gpt-3.5-turbo-0301</b></sub></td><td><sub>1.0668</sub></td><td><sub>1.8241</sub></td><td><sub>0.4229</sub></td><td><sub>0.6538</sub></td><td><sub>0.5570</sub></td><td><sub>0.9836</sub></td><td><sub>0.4715</sub></td><td><sub>0.9073</sub></td><td><sub>0.3878</sub></td><td><sub>0.7056</sub></td><td><sub>0.5812</sub></td><td><sub>1.0149</sub></td></tr>
+<tr><td><sub><b>gpt-3.5-turbo-1106</b></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub>0.4713</sub></td><td><sub>0.6297</sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td></tr>
+<tr><td><sub><b>gpt-4-0314</b></sub></td><td><sub>0.7978</sub></td><td><sub>1.6446</sub></td><td><sub>0.2001</sub></td><td><sub>0.3658</sub></td><td><sub>0.3709</sub></td><td><sub>0.7675</sub></td><td><sub>0.3268</sub></td><td><sub>0.6638</sub></td><td><sub>0.2386</sub></td><td><sub>0.4998</sub></td><td><sub>0.3868</sub></td><td><sub>0.7883</sub></td></tr>
+<tr><td><sub><b>gpt-4-1106-preview</b></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub>0.1757</sub></td><td><sub>0.3279</sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td><td><sub></sub></td></tr></tbody></table>
+
 ### Evaluate Algorithmic Models
 We provide four algorithmic models for comparison in zero-shot trajectory prediction task, available in `./zero-shot/algorithmic_model_benchmark.py`.
 The source code supports four extrapolation methods: stop, linear extrapolation, cubic extrapolation and Kalman filter.
@@ -210,6 +218,14 @@ To evaluate our LMTraj-SUP model on both the ETH and UCY datasets simultaneously
 ./script/eval_all.sh
 ./script/eval_all_deterministic.sh
 ```
+
+**Results**
+<table><thead><tr><th rowspan="2"><sub><b>LMTraj-SUP</b></sub></th><th colspan="2"><sub><b>ETH</b></sub></th><th colspan="2"><sub><b>HOTEL</b></sub></th><th colspan="2"><sub><b>UNIV</b></sub></th><th colspan="2"><sub><b>ZARA1</b></sub></th><th colspan="2"><sub><b>ZARA2</b></sub></th><th colspan="2"><sub><b>AVG</b></sub></th></tr>
+<tr><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th><th><sub><b>ADE</b></sub></th><th><sub><b>FDE</b></sub></th></tr></thead><tbody>
+<tr><td><sub><b>Deterministic w/ image</b></sub></td><td><sub>0.6549</sub></td><td><sub>1.0377</sub></td><td><sub>0.2640</sub></td><td><sub>0.4583</sub></td><td><sub>0.5715</sub></td><td><sub>1.1579</sub></td><td><sub>0.5119</sub></td><td><sub>1.0066</sub></td><td><sub>0.3802</sub></td><td><sub>0.7408</sub></td><td><sub>0.4765</sub></td><td><sub>0.8803</sub></td></tr>
+<tr><td><sub><b>Deterministic w/o image</b></sub></td><td><sub>0.6724</sub></td><td><sub>1.2388</sub></td><td><sub>0.2498</sub></td><td><sub>0.4331</sub></td><td><sub>0.5723</sub></td><td><sub>1.1612</sub></td><td><sub>0.5090</sub></td><td><sub>1.0018</sub></td><td><sub>0.3827</sub></td><td><sub>0.7471</sub></td><td><sub>0.4772</sub></td><td><sub>0.9164</sub></td></tr>
+<tr><td><sub><b>Stochastic w/ image</b></sub></td><td><sub>0.4087</sub></td><td><sub>0.5011</sub></td><td><sub>0.1200</sub></td><td><sub>0.1558</sub></td><td><sub>0.2178</sub></td><td><sub>0.3440</sub></td><td><sub>0.1992</sub></td><td><sub>0.3183</sub></td><td><sub>0.1748</sub></td><td><sub>0.2720</sub></td><td><sub>0.2241</sub></td><td><sub>0.3182</sub></td></tr>
+<tr><td><sub><b>Stochastic w/o image</b></sub></td><td><sub>0.4106</sub></td><td><sub>0.6188</sub></td><td><sub>0.1212</sub></td><td><sub>0.1595</sub></td><td><sub>0.2188</sub></td><td><sub>0.3465</sub></td><td><sub>0.2018</sub></td><td><sub>0.3225</sub></td><td><sub>0.1756</sub></td><td><sub>0.2760</sub></td><td><sub>0.2256</sub></td><td><sub>0.3447</sub></td></tr></tbody></table>
 
 <br>
 
