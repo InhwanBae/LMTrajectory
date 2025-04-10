@@ -22,8 +22,8 @@
   <br>Traditional vs. Our language-based trajectory prediction, LMTraj.
 </div>
 
-<br>This repository contains the code for the LMTrajectory framework.
-<br>**TL;DR**: **Language model**-based, **Multimodal input**, **Multimodal output**, **Multi-task training** approach for **Zero-shot** and **Supervised** human trajectory prediction. 
+<!--<br>This repository contains the code for the LMTrajectory framework.-->
+<br>**Summary**: **Language model**-based, **Multimodal input**, **Multimodal output**, **Multi-task training** approach for **Zero-shot** and **Supervised** human trajectory prediction. 
 
 <br>
 
@@ -232,6 +232,7 @@ To evaluate our LMTraj-SUP model on both the ETH and UCY datasets simultaneously
 ## 📖 Citation
 If you find this code useful for your research, please cite our trajectory prediction papers :)
 
+[**`🏢🚶‍♂️ CrowdES (CVPR'25) 🏃‍♀️🏠`**](https://github.com/InhwanBae/Crowd-Behavior-Generation) **|**
 [**`💬 LMTrajectory (CVPR'24) 🗨️`**](https://github.com/InhwanBae/LMTrajectory) **|**
 [**`1️⃣ SingularTrajectory (CVPR'24) 1️⃣`**](https://github.com/InhwanBae/SingularTrajectory) **|**
 [**`🌌 EigenTrajectory (ICCV'23) 🌌`**](https://github.com/InhwanBae/EigenTrajectory) **|** 
@@ -252,6 +253,13 @@ If you find this code useful for your research, please cite our trajectory predi
   <summary>More Information (Click to expand)</summary>
 
 ```bibtex
+@inproceedings{bae2025crowdes,
+  title={Continuous Locomotive Crowd Behavior Generation},
+  author={Bae, Inhwan and Lee, Junoh and Jeon, Hae-Gon},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2025}
+}
+
 @inproceedings{bae2024singulartrajectory,
   title={SingularTrajectory: Universal Trajectory Predictor Using Diffusion Model},
   author={Bae, Inhwan and Park, Young-Jae and Jeon, Hae-Gon},
