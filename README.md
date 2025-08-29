@@ -133,7 +133,7 @@ python ./zero-shot/algorithmic_model_benchmark.py --model kalman
 ### Setup
 **Environment**
 <br>All models were tested on Ubuntu 20.04 with Python 3.10 and PyTorch 2.0.1 with CUDA 11.7.
-Dependencies include Python packages such as `transformers`, `accelerate`, `nltk` and `sentencepiece`.
+Dependencies include Python packages such as `transformers`, `accelerate`, `datasets`, `nltk` and `sentencepiece`.
 
 **Dataset**
 <br>Preprocessed [ETH](https://data.vision.ee.ethz.ch/cvl/aem/ewap_dataset_full.tgz) and [UCY](https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data) datasets are released in this repository. 

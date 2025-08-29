@@ -1,0 +1,9 @@
+accelerate
+datasets
+nltk
+openai==0.28.0
+scipy
+sentencepiece
+simdkalman
+transformers
+torch==2.0.1
