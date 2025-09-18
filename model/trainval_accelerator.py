@@ -208,7 +208,7 @@ def trainval(cfg):
             resume_step = int(training_difference.replace("step_", "")) * cfg.gradient_accumulation_steps
             starting_epoch = resume_step // len(train_dataloader)
             resume_step -= starting_epoch * len(train_dataloader)
-            completed_steps = resume_step // cfg.gradient_accumulation_stepp
+            completed_steps = resume_step // cfg.gradient_accumulation_steps
 
         progress_bar.update(completed_steps)
 

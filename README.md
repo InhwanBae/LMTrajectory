@@ -50,7 +50,7 @@ Dependencies include Python packages such as `scipy`, `simdkalman` and `openai==
 
 **Dataset**
 <br>Preprocessed [ETH](https://data.vision.ee.ethz.ch/cvl/aem/ewap_dataset_full.tgz) and [UCY](https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data) datasets are released in this repository. 
-The train/validation/test splits are the same as those fond in [Social-GAN](https://github.com/agrimgupta92/sgan).
+The train/validation/test splits are the same as those found in [Social-GAN](https://github.com/agrimgupta92/sgan).
 
 **Sample**
 <br>We provide our zero-shot prediction results in the [release section](https://github.com/InhwanBae/LMTrajectory/releases/download/v1.0/LMTraj-ZERO_output_trajectory.zip). 
